@@ -1,110 +1,140 @@
 import 'package:flutter/material.dart';
 
-
-class TodoListPage extends StatelessWidget{
-  TodoListPage({super.key});
-  final TextEditingController emailController = TextEditingController();
+class TodoListPage extends StatefulWidget {
+  const TodoListPage({super.key});
 
   @override
-  Widget build(BuildContext context){
+  State<TodoListPage> createState() => _TodoListPageState();
+}
+
+class _TodoListPageState extends State<TodoListPage> {
+  final TextEditingController todoController = TextEditingController();
+
+  List<String> todos = [];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
+      appBar: AppBar(
+        title: const Text("Todo List"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children:[
+                children: [
                   Expanded(
-                    child:
-                    TextField(
-                      decoration: InputDecoration(
+                    child: TextField(
+                      controller: todoController,
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: ('Adicione uma tarefa'),
                       ),
                     ),
                   ),
-                  SizedBox(width: 8,),
+                  const SizedBox(
+                    width: 8,
+                  ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      padding: EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: (){},
-                    child: Icon(
+                    onPressed: () {
+                      setState(() {
+                        String text = todoController.text;
+                        todos.add(text);
+
+                        todoController.clear();
+                        FocusScope.of(context).unfocus();
+                      });
+                    },
+                    child: const Icon(
                       Icons.add,
                       size: 30,
                     ),
                   ),
                 ],
               ),
-
-              SizedBox(width: 16,),
-              ListView(
-                shrinkWrap: true,
-                children: [
-                  Container(
-                    color: Colors.blue,
-                    height: 50,
-                  ),
-                  Container(
-                    color: Colors.yellow,
-                    height: 50,
-                  ),
-                  Container(
-                    color: Colors.green,
-                    height: 50,
-                  ),
-                  Container(
-                    color: Colors.pink,
-                    height: 50,
-                  ),
-                ],
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * 0.025,
               ),
-              SizedBox(width: 16,),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        labelText: ('Exclusão geral de todas'),
-                      ),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: todos.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(todos[index]),
+                        subtitle: const Text('Outubro'),
+                        leading: const Icon(
+                          Icons.access_time,
+                          size: 30,
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              todos.removeAt(index);
+                            });
+                          },
+                          icon: const Icon(Icons.delete_rounded),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                    child: Text(
+                  "Quantidade de itens: ${todos.length}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                )),
+                const SizedBox(
+                  width: 8,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.all(14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  SizedBox(width: 8,),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: EdgeInsets.all(14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        )
-                    ),
-                    onPressed: (){},
-                    child: Text('Ligar tudo'),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                  onPressed: () {
+                    setState(() {
+                      todos.clear();
+                    });
+                  },
+                  child: const Text('Excluir'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
-}
-
-void login(){
-  //String text = emailController.text;
-  //print(text);
-}
-
-void onChanged(String texts){
-  //print(text);
 }
